@@ -88,7 +88,6 @@ sub local_alignment {
                 $max_i     = $i;
                 $max_j     = $j;
             }
-
         }
     }
 
