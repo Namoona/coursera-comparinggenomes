@@ -66,7 +66,7 @@ sub middle_edge {    ## no critic (ProhibitManyArgs)
     my $middle = int( ( length $w ) / 2 );    ## no critic (ProhibitReusedNames)
 
     my $w1 = substr $w, 0, $middle;
-    my $from_source = alignment( $v, $w1, $score );
+    my ( $from_source, undef ) = alignment( $v, $w1, $score );
 
     my $w2 = reverse substr $w, $middle;
     my ( $to_sink, $backtrack ) =
