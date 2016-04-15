@@ -25,7 +25,7 @@ get_and_check_options();
 
 my ($genome) = path($input_file)->lines( { chomp => 1 } );
 $genome =~ s/\A [(]//xms;
-$genome =~ s/[(] \z//xms;
+$genome =~ s/[)] \z//xms;
 my @genome = split /[)][(]/xms, $genome;
 my @p;
 foreach my $chromosome (@genome) {
