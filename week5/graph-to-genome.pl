@@ -45,8 +45,12 @@ sub graph_to_genome {
     my @cycle;
     foreach my $edge (@edges) {
         push @cycle, @{$edge};
-        if ( $edge->[0] > $edge->[1] ) {
-            push @cycle, shift @cycle;
+
+        # Complete cycle if first and last numbers are paired
+        if ( abs( $cycle[0] - $cycle[-1] ) == 1
+            && int( $cycle[0] / 2 ) != int( $cycle[-1] / 2 ) )
+        {
+            unshift @cycle, $cycle[-1];
             push @p, [ cycle_to_chromosome(@cycle) ];
             @cycle = ();
         }
