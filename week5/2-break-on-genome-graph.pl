@@ -43,10 +43,42 @@ sub two_break_on_genome_graph {
     my ( $edges, $i, $i_prime, $j, $j_prime ) = @_;
     ## use critic
 
-    @{$edges} = grep { $_->[0] != $i && $_->[1] != $i } @{$edges};
-    @{$edges} = grep { $_->[0] != $j && $_->[1] != $j } @{$edges};
-    push @{$edges}, [ $i,       $j ];
-    push @{$edges}, [ $i_prime, $j_prime ];
+    my @limits;
+    my $k            = 0;
+    my $i_or_j_first = 0;
+    foreach my $edge ( @{$edges} ) {
+        if ( $edge->[0] == $i ) {    ## no critic (ProhibitCascadingIfElse)
+            $i_or_j_first++;
+            push @limits, $k;
+        }
+        elsif ( $edge->[0] == $j_prime ) {
+            push @limits, $k;
+        }
+        elsif ( $edge->[0] == $j ) {
+            $i_or_j_first++;
+            push @limits, $k;
+        }
+        elsif ( $edge->[0] == $i_prime ) {
+            push @limits, $k;
+        }
+        $k++;
+    }
+    if ( $i_or_j_first % 2 ) {
+
+        # New cycle
+        ( $edges->[ $limits[0] ]->[1], $edges->[ $limits[1] ]->[1] ) =
+          ( $edges->[ $limits[1] ]->[1], $edges->[ $limits[0] ]->[1] );
+        my @cycle = splice @{$edges}, $limits[0] + 1, $limits[1] - $limits[0];
+        push @{$edges}, @cycle;
+    }
+    else {
+        # Reverse
+        ( $edges->[ $limits[0] ]->[1], $edges->[ $limits[1] ]->[0] ) =
+          ( $edges->[ $limits[1] ]->[0], $edges->[ $limits[0] ]->[1] );
+        my @rev = splice @{$edges}, $limits[0] + 1, $limits[1] - $limits[0] - 1;
+        @rev = reverse map { [ $_->[1], $_->[0] ] } @rev;
+        splice @{$edges}, $limits[0] + 1, 0, @rev;
+    }
 
     return @{$edges};
 }
